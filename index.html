@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home — VELOCHECK</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#070a0f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<script src="app-navigation.js"></script>
+<body>
+    <header class="vc-header">
+        <div class="vc-brand">
+            <span class="mark"></span>
+            <div>
+                <h1 class="title">VELOCHECK</h1>
+                <p class="tagline">Operator 9140 · Udit Veer Singh</p>
+            </div>
+        </div>
+        <div class="vc-header-meta">Telemetry link<br><strong id="espLinkStatus">Direct Wi-Fi</strong></div>
+    </header>
+
+    <main class="vc-page">
+        <div class="wifi-status-bar">
+            <span style="display:flex; align-items:center; gap:8px;">
+                <span class="wifi-dot" id="wifiIndicator"></span>
+                <span>ESP32 Wi-Fi: <strong id="espAddressLabel">http://192.168.4.1</strong></span>
+            </span>
+            <a href="setting.html" style="color: var(--signal-cyan); text-decoration:none; font-weight:600;">Configure ⚙</a>
+        </div>
+
+        <section class="panel">
+            <p class="panel-label">Select a vehicle to monitor</p>
+            <div class="vehicle-select-row">
+                <select id="vehicleDropdown" onchange="if(this.value) window.location.href=this.value;">
+                    <option value="">-- Choose a vehicle --</option>
+                    <option value="bike.html">BIKE — UP32 AW 7094 (2 Wheeler)</option>
+                    <option value="car.html">CAR — UP32 EV 2026 (4 Wheeler)</option>
+                </select>
+                <a class="btn" href="registeration.html">+ Register</a>
+            </div>
+        </section>
+
+        <nav>
+            <div class="nav-grid">
+                <a class="nav-tile" href="detail.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 12a4 4 0 100-8 4 4 0 000 8z"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+                    Details
+                </a>
+                <a class="nav-tile" href="setting.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.04 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.44 19.3a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.08 15a1.7 1.7 0 00-1.56-1.04H2.5a2 2 0 110-4h.09A1.7 1.7 0 004.15 8.6a1.7 1.7 0 00-.34-1.87l-.06-.06A2 2 0 116.58 3.84l.06.06A1.7 1.7 0 008.5 4.24a1.7 1.7 0 001.04-1.56V2.6a2 2 0 114 0v.09A1.7 1.7 0 0015.5 4.24a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87 1.7 1.7 0 001.56 1.04h.09a2 2 0 110 4h-.09a1.7 1.7 0 00-1.56 1.04z"/></svg>
+                    Settings
+                </a>
+                <a class="nav-tile" href="notification.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+                    Notifications
+                </a>
+            </div>
+        </nav>
+    </main>
+
+    <script>
+        const savedUrl = localStorage.getItem("velocheck.apiBase") || "http://192.168.4.1";
+        document.getElementById("espAddressLabel").textContent = savedUrl;
+    </script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+</body>
+</html>

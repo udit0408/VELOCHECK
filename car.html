@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Car — VELOCHECK</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#070a0f">
+</head>
+<body>
+  <header class="vc-header">
+    <div class="vc-brand">
+      <a href="homepage.html" class="icon-btn" style="text-decoration:none; margin-right:4px;">←</a>
+      <span class="mark"></span>
+      <div>
+        <h1 class="title">VELOCHECK</h1>
+        <p class="tagline">Four wheeler health telemetry</p>
+      </div>
+    </div>
+    <div class="vc-header-meta">
+      Last reading<br><strong id="lastReadingTime">connecting</strong>
+    </div>
+  </header>
+
+  <main class="vc-page">
+    <div class="vehicle-strip">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="avatar">🚗</div>
+        <div>
+          <p class="id-name">Four Wheeler · UP32 EV 2026</p>
+          <p class="id-number">Direct ESP32 Wi-Fi Sensor Telemetry</p>
+        </div>
+      </div>
+      <span class="status-chip warn" id="overallStatus">WAITING</span>
+    </div>
+
+    <!-- Clickable health overview pie/donut chart -->
+    <section class="panel health-overview" id="healthOverview">
+      <div class="health-chart"></div>
+      <div class="health-overview-copy">
+        <p class="panel-label">Clickable Health Distribution</p>
+        <p class="health-summary">Waiting for a reading</p>
+        <p>Tap this chart or any gauge to view the previous record, measuring time, 20-reading average and next prediction.</p>
+      </div>
+    </section>
+
+    <!-- Tyre Pressure Gauges -->
+    <section class="metric-section">
+      <p class="metric-section-title">Tyre Pressure (psi)</p>
+      <div class="gauge-grid">
+        <div class="gauge-card"><span class="wheel-label">FRONT LEFT</span><div id="pFL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">FRONT RIGHT</span><div id="pFR"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR LEFT</span><div id="pRL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR RIGHT</span><div id="pRR"></div></div>
+      </div>
+    </section>
+
+    <!-- Tyre Temperature Gauges -->
+    <section class="metric-section">
+      <p class="metric-section-title">Tyre Temperature (°C)</p>
+      <div class="gauge-grid">
+        <div class="gauge-card"><span class="wheel-label">FRONT LEFT</span><div id="tFL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">FRONT RIGHT</span><div id="tFR"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR LEFT</span><div id="tRL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR RIGHT</span><div id="tRR"></div></div>
+      </div>
+    </section>
+
+    <!-- Tread Depth Gauges -->
+    <section class="metric-section">
+      <p class="metric-section-title">Tread Depth (mm)</p>
+      <div class="gauge-grid">
+        <div class="gauge-card"><span class="wheel-label">FRONT LEFT</span><div id="dFL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">FRONT RIGHT</span><div id="dFR"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR LEFT</span><div id="dRL"></div></div>
+        <div class="gauge-card"><span class="wheel-label">REAR RIGHT</span><div id="dRR"></div></div>
+      </div>
+    </section>
+
+    <!-- Live Trends -->
+    <section class="metric-section">
+      <p class="metric-section-title">Live Trends — Last 20 Readings</p>
+      <div class="panel trend-panel">
+        <p class="panel-label">Tyre Pressure (psi)</p>
+        <div id="pressureTrend"></div>
+      </div>
+      <div class="panel trend-panel" style="margin-top:12px;">
+        <p class="panel-label">Tyre Temperature (°C)</p>
+        <div id="tempTrend"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Detailed Telemetry Modal -->
+  <dialog id="readingDetail" class="chart-detail-dialog">
+    <div class="detail-modal">
+      <header>
+        <h2>Measurement Detail</h2>
+        <button class="icon-btn" aria-label="Close">×</button>
+      </header>
+      <div class="wheel-tabs"></div>
+      <div class="detail-modal-grid"></div>
+    </div>
+  </dialog>
+
+  <script src="app-navigation.js"></script>
+  <script src="gauge.js"></script>
+  <script src="live-dashboard.js"></script>
+  <script>
+    VeloCheckLive.startCar();
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+  </script>
+</body>
+</html>

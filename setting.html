@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — VELOCHECK</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#070a0f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<script src="app-navigation.js"></script>
+<body>
+    <header class="vc-header">
+        <div class="vc-brand">
+            <span class="mark"></span>
+            <div>
+                <h1 class="title">VELOCHECK</h1>
+                <p class="tagline">System Configuration</p>
+            </div>
+        </div>
+        <a href="homepage.html" class="icon-btn" style="text-decoration:none;">←</a>
+    </header>
+
+    <main class="vc-page-narrow">
+        <section class="panel">
+            <p class="panel-label">ESP32 Direct Wi-Fi Setup</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 14px;">
+                Connect your phone's Wi-Fi directly to the ESP32 access point <strong>VELOCHECK-WIFI</strong> to read telemetry without using any laptop or router.
+            </p>
+            
+            <div class="field" style="margin-bottom: 12px;">
+                <label for="apiEndpoint">ESP32 Base URL</label>
+                <input id="apiEndpoint" type="url" placeholder="http://192.168.4.1" value="http://192.168.4.1">
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;" onclick="setPreset('http://192.168.4.1')">
+                    ESP32 SoftAP (192.168.4.1)
+                </button>
+                <button type="button" class="btn btn-outline" style="padding: 6px 10px; font-size: 11px;" onclick="setPreset('http://localhost:8000')">
+                    Localhost:8000
+                </button>
+            </div>
+
+            <button type="button" id="pingBtn" class="btn btn-block" onclick="testConnection()">
+                ⚡ Ping ESP32 Connection
+            </button>
+            <div id="pingResult" style="margin-top: 10px; font-size: 12px; text-align: center; min-height: 18px;"></div>
+        </section>
+
+        <section class="panel" style="margin-top: 18px;">
+            <p class="panel-label">Telemetry Preferences</p>
+            
+            <div class="field" style="margin-bottom: 14px;">
+                <label for="pollInterval">Poll Rate</label>
+                <select id="pollInterval">
+                    <option value="1000">Fast (1 second)</option>
+                    <option value="2000" selected>Normal (2 seconds)</option>
+                    <option value="5000">Battery Saver (5 seconds)</option>
+                </select>
+            </div>
+
+            <div class="field" style="margin-bottom: 14px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="simToggle" checked style="width: 18px; height: 18px;">
+                    <span style="font-size: 13px; color: var(--text-primary);">Fallback to Demo Simulator when ESP32 is off</span>
+                </label>
+            </div>
+
+            <button type="button" class="btn btn-block" onclick="saveSettings()">Save Configuration</button>
+        </section>
+
+        <section class="panel" style="margin-top: 18px;">
+            <p class="panel-label">About System</p>
+            <ul class="kv-list">
+                <li class="kv-row"><span class="k">App Version</span><span class="v">2.4.0-direct-wifi</span></li>
+                <li class="kv-row"><span class="k">Protocol</span><span class="v">HTTP / REST JSON (CORS)</span></li>
+                <li class="kv-row"><span class="k">Moving Average Window</span><span class="v">Last 20 Readings</span></li>
+                <li class="kv-row"><span class="k">Predictor Model</span><span class="v">Ordinary Least Squares Trend</span></li>
+            </ul>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem("velocheck.apiBase") || "http://192.168.4.1";
+            document.getElementById("apiEndpoint").value = saved;
+            const sim = localStorage.getItem("velocheck.simFallback");
+            if (sim !== null) {
+                document.getElementById("simToggle").checked = sim === "true";
+            }
+        });
+
+        function setPreset(url) {
+            document.getElementById("apiEndpoint").value = url;
+        }
+
+        async function testConnection() {
+            const endpoint = document.getElementById("apiEndpoint").value.trim().replace(/\/$/, "");
+            const out = document.getElementById("pingResult");
+            out.innerHTML = '<span style="color: var(--signal-cyan);">Pinging ESP32...</span>';
+
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 3000);
+            try {
+                const t0 = performance.now();
+                const res = await fetch(`${endpoint}/api/readings/latest?vehicle_type=bike`, {
+                    signal: controller.signal,
+                    cache: "no-store"
+                });
+                clearTimeout(id);
+                const t1 = performance.now();
+                if (res.ok) {
+                    out.innerHTML = `<span style="color: var(--signal-green);">✔ Connected to ESP32 (${Math.round(t1 - t0)}ms latency)</span>`;
+                } else {
+                    out.innerHTML = `<span style="color: var(--signal-amber);">Connected but received HTTP ${res.status}</span>`;
+                }
+            } catch (err) {
+                clearTimeout(id);
+                out.innerHTML = '<span style="color: var(--signal-red);">✖ Cannot reach ESP32. Ensure phone Wi-Fi is on VELOCHECK-WIFI</span>';
+            }
+        }
+
+        function saveSettings() {
+            const url = document.getElementById("apiEndpoint").value.trim();
+            const sim = document.getElementById("simToggle").checked;
+            localStorage.setItem("velocheck.apiBase", url);
+            localStorage.setItem("velocheck.simFallback", sim ? "true" : "false");
+            alert("Settings saved successfully!");
+        }
+    </script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+</body>
+</html>
