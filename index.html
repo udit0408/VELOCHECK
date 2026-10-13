@@ -1,72 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home — VELOCHECK</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#070a0f">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070a0f">
+  <title>VELOCHECK — Sign in / Register</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-shell{width:min(100% - 32px,460px);margin:auto;padding:38px 0 56px;flex:1;display:flex;flex-direction:column;justify-content:center}
+    .auth-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px;text-align:left}
+    .auth-brand .mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--signal-cyan),#0077ff);box-shadow:0 0 18px var(--signal-cyan-glow);position:relative;display:inline-block;flex-shrink:0}
+    .auth-brand .mark:after{content:"";position:absolute;inset:8px;border:2px solid white;border-radius:4px}
+    .auth-brand h1{font-family:var(--font-display);font-size:30px;letter-spacing:2px;color:#fff;line-height:1.1}
+    .auth-brand p{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-secondary);margin-top:4px}
+    .auth-card{padding:26px 24px}
+    .auth-heading{text-align:center;margin-bottom:20px}
+    .auth-heading h2{font-family:var(--font-display);font-size:25px;letter-spacing:.8px;color:#fff}
+    .auth-heading p{font-size:13px;color:var(--text-secondary);margin-top:5px}
+    .auth-tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:22px}
+    .auth-tab{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;padding:12px 8px;color:var(--text-secondary);font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer}
+    .auth-tab.active{color:var(--signal-cyan);border-bottom-color:var(--signal-cyan)}
+    .auth-form{display:none;flex-direction:column;gap:15px}
+    .auth-form.active{display:flex}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .field label{font-size:12px;color:var(--text-secondary);font-weight:600}
+    .field input{width:100%;background:rgba(9,13,19,.9);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:#fff;font:14px var(--font-body);outline:none}
+    .field input:focus{border-color:var(--signal-cyan);box-shadow:0 0 12px rgba(0,229,255,.2)}
+    .auth-message{font-size:13px;min-height:18px;color:var(--signal-amber);text-align:center}
+    .auth-note{text-align:center;color:var(--text-tertiary);font-size:11px;margin-top:18px;line-height:1.5}
+    .auth-switch{border:0;background:none;color:var(--signal-cyan);cursor:pointer;font:inherit}
+    @media(max-width:420px){.auth-card{padding:22px 18px}.auth-brand h1{font-size:27px}}
+  </style>
 </head>
-<script src="app-navigation.js"></script>
 <body>
-    <header class="vc-header">
-        <div class="vc-brand">
-            <span class="mark"></span>
-            <div>
-                <h1 class="title">VELOCHECK</h1>
-                <p class="tagline">Operator 9140 · Udit Veer Singh</p>
-            </div>
+  <main class="auth-shell">
+    <div class="auth-brand">
+      <span class="mark" aria-hidden="true"></span>
+      <div><h1>VELOCHECK</h1><p>Smart tyre health monitoring</p></div>
+    </div>
+
+    <section class="panel auth-card">
+      <div class="auth-heading">
+        <h2 id="formHeading">Welcome back</h2>
+        <p id="formSubheading">Sign in to continue to your dashboard.</p>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Account access">
+        <button class="auth-tab active" id="signinTab" type="button" role="tab" aria-selected="true">SIGN IN</button>
+        <button class="auth-tab" id="registerTab" type="button" role="tab" aria-selected="false">REGISTER</button>
+      </div>
+
+      <form class="auth-form active" id="signinForm">
+        <div class="field">
+          <label for="signinEmail">Email address</label>
+          <input id="signinEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
         </div>
-        <div class="vc-header-meta">Telemetry link<br><strong id="espLinkStatus">Direct Wi-Fi</strong></div>
-    </header>
-
-    <main class="vc-page">
-        <div class="wifi-status-bar">
-            <span style="display:flex; align-items:center; gap:8px;">
-                <span class="wifi-dot" id="wifiIndicator"></span>
-                <span>ESP32 Wi-Fi: <strong id="espAddressLabel">http://192.168.4.1</strong></span>
-            </span>
-            <a href="setting.html" style="color: var(--signal-cyan); text-decoration:none; font-weight:600;">Configure ⚙</a>
+        <div class="field">
+          <label for="signinPassword">Password</label>
+          <input id="signinPassword" type="password" autocomplete="current-password" placeholder="Enter your password" required>
         </div>
+        <button class="btn btn-block" type="submit">SIGN IN →</button>
+        <p class="auth-message" id="signinMessage" role="status" aria-live="polite"></p>
+        <p class="auth-footnote">New to VELOCHECK? <button class="auth-switch" type="button" data-show="register">Create an account</button></p>
+      </form>
 
-        <section class="panel">
-            <p class="panel-label">Select a vehicle to monitor</p>
-            <div class="vehicle-select-row">
-                <select id="vehicleDropdown" onchange="if(this.value) window.location.href=this.value;">
-                    <option value="">-- Choose a vehicle --</option>
-                    <option value="bike.html">BIKE — UP32 AW 7094 (2 Wheeler)</option>
-                    <option value="car.html">CAR — UP32 EV 2026 (4 Wheeler)</option>
-                </select>
-                <a class="btn" href="registeration.html">+ Register</a>
-            </div>
-        </section>
+      <form class="auth-form" id="registerForm">
+        <div class="field">
+          <label for="registerName">Full name</label>
+          <input id="registerName" type="text" autocomplete="name" placeholder="Your full name" required maxlength="80">
+        </div>
+        <div class="field">
+          <label for="registerEmail">Email address</label>
+          <input id="registerEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="registerPassword">Create password (minimum 8 characters)</label>
+          <input id="registerPassword" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter your password" required>
+        </div>
+        <button class="btn btn-block" type="submit">CREATE ACCOUNT →</button>
+        <p class="auth-message" id="registerMessage" role="status" aria-live="polite"></p>
+        <p class="auth-footnote">Already registered? <button class="auth-switch" type="button" data-show="signin">Sign in</button></p>
+      </form>
+    </section>
 
-        <nav>
-            <div class="nav-grid">
-                <a class="nav-tile" href="detail.html">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 12a4 4 0 100-8 4 4 0 000 8z"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-                    Details
-                </a>
-                <a class="nav-tile" href="setting.html">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.04 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.44 19.3a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.08 15a1.7 1.7 0 00-1.56-1.04H2.5a2 2 0 110-4h.09A1.7 1.7 0 004.15 8.6a1.7 1.7 0 00-.34-1.87l-.06-.06A2 2 0 116.58 3.84l.06.06A1.7 1.7 0 008.5 4.24a1.7 1.7 0 001.04-1.56V2.6a2 2 0 114 0v.09A1.7 1.7 0 0015.5 4.24a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87 1.7 1.7 0 001.56 1.04h.09a2 2 0 110 4h-.09a1.7 1.7 0 00-1.56 1.04z"/></svg>
-                    Settings
-                </a>
-                <a class="nav-tile" href="notification.html">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-                    Notifications
-                </a>
-            </div>
-        </nav>
-    </main>
+    <p class="auth-note">VELOCHECK · Tyre telemetry and vehicle health dashboard<br>Prototype authentication only — use a secure backend for real accounts.</p>
+  </main>
 
-    <script>
-        const savedUrl = localStorage.getItem("velocheck.apiBase") || "http://192.168.4.1";
-        document.getElementById("espAddressLabel").textContent = savedUrl;
-    </script>
-<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");</script>
+  <script>
+    const signinTab = document.getElementById('signinTab');
+    const registerTab = document.getElementById('registerTab');
+    const signinForm = document.getElementById('signinForm');
+    const registerForm = document.getElementById('registerForm');
+
+    function showForm(which) {
+      const registering = which === 'register';
+      signinForm.classList.toggle('active', !registering);
+      registerForm.classList.toggle('active', registering);
+      signinTab.classList.toggle('active', !registering);
+      registerTab.classList.toggle('active', registering);
+      signinTab.setAttribute('aria-selected', String(!registering));
+      registerTab.setAttribute('aria-selected', String(registering));
+      document.getElementById('formHeading').textContent = registering ? 'Create your account' : 'Welcome back';
+      document.getElementById('formSubheading').textContent = registering
+        ? 'Register to access your VELOCHECK dashboard.'
+        : 'Sign in to continue to your dashboard.';
+      document.getElementById('signinMessage').textContent = '';
+      document.getElementById('registerMessage').textContent = '';
+    }
+
+    signinTab.addEventListener('click', () => showForm('signin'));
+    registerTab.addEventListener('click', () => showForm('register'));
+    document.querySelectorAll('[data-show]').forEach(button => {
+      button.addEventListener('click', () => showForm(button.dataset.show));
+    });
+
+    registerForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim().toLowerCase();
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      const message = document.getElementById('registerMessage');
+
+      if (password.length < 8) {
+        message.textContent = 'Please use a password with at least 8 characters.';
+        return;
+      }
+      if (password !== confirm) {
+        message.textContent = 'Passwords do not match.';
+        return;
+      }
+
+      // Demo-only storage. Do not store real passwords in localStorage in production.
+      const accounts = JSON.parse(localStorage.getItem('velocheck.demoAccounts') || '{}');
+      if (accounts[email]) {
+        message.textContent = 'An account with this email already exists. Please sign in.';
+        return;
+      }
+      accounts[email] = { name, password };
+      localStorage.setItem('velocheck.demoAccounts', JSON.stringify(accounts));
+      localStorage.setItem('velocheck.currentUser', JSON.stringify({ name, email }));
+      window.location.href = 'homepage.html';
+    });
+
+    signinForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const email = document.getElementById('signinEmail').value.trim().toLowerCase();
+      const password = document.getElementById('signinPassword').value;
+      const message = document.getElementById('signinMessage');
+      const accounts = JSON.parse(localStorage.getItem('velocheck.demoAccounts') || '{}');
+      const account = accounts[email];
+
+      if (!account || account.password !== password) {
+        message.textContent = 'Email or password is incorrect. Register first if you do not have an account.';
+        return;
+      }
+      localStorage.setItem('velocheck.currentUser', JSON.stringify({ name: account.name, email }));
+      window.location.href = 'homepage.html';
+    });
+  </script>
 </body>
 </html>
