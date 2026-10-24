@@ -1,8 +1,15 @@
-const CACHE_NAME = "velocheck-v2";
+const CACHE_NAME = "velocheck-v16";
 const ASSETS = [
   "./",
   "./index.html",
   "./homepage.html",
+  "./auth.html",
+  "./subscription.html",
+  "./maintenance.html",
+  "./index (1).html",
+  "./auth-client.js",
+  "./ai-assistant.js",
+  "./towing.html",
   "./bike.html",
   "./car.html",
   "./detail.html",

@@ -9,6 +9,8 @@ velocheck.db
 
 # Vercel build output & local cache
 .vercel
+.next/
+scratch/
 
 # Node modules & logs
 node_modules/

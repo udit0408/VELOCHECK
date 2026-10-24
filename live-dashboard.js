@@ -167,7 +167,7 @@ const VeloCheckLive = (() => {
     const worst = valid.reduce((a, b) => (statusOrder[b] > statusOrder[a] ? b : a), "ok");
     const chip = document.getElementById("overallStatus");
     if (!chip) return;
-    chip.textContent = valid.length ? (worst === "ok" ? "NOMINAL" : worst === "warn" ? "WARNING" : "CRITICAL") : "WAITING";
+    chip.textContent = valid.length ? (worst === "ok" ? "Normal" : worst === "warn" ? "Check Recommended" : "Action Required") : "Data Unavailable";
     chip.className = "status-chip" + (worst === "ok" ? "" : " " + worst);
   }
 
@@ -247,15 +247,15 @@ const VeloCheckLive = (() => {
     });
 
     const parts = [
-      { label: "Nominal", value: count.ok, color: "#00e5ff", status: "ok" },
-      { label: "Warning", value: count.warn, color: "#ffb300", status: "warn" },
-      { label: "Critical", value: count.crit, color: "#ff3366", status: "crit" }
+      { label: "Normal", value: count.ok, color: "#0ea5e9", status: "ok" },
+      { label: "Check Recommended", value: count.warn, color: "#f59e0b", status: "warn" },
+      { label: "Action Required", value: count.crit, color: "#ef4444", status: "crit" }
     ].filter((x) => x.value > 0);
 
     const chartContainer = box.querySelector(".health-chart");
     VC.donutChart(
       chartContainer,
-      parts.length ? parts : [{ label: "Waiting", value: 1, color: "#2c3d4f", status: "waiting" }],
+      parts.length ? parts : [{ label: "Data Unavailable", value: 1, color: "#334155", status: "waiting" }],
       (selectedPart) => {
         // When user clicks the pie chart or a slice, open the detail modal!
         showDetail(wheels[0], selectedPart ? `${selectedPart.label} Slice` : "Health Overview");
@@ -265,8 +265,8 @@ const VeloCheckLive = (() => {
     const summaryEl = box.querySelector(".health-summary");
     if (summaryEl) {
       summaryEl.textContent = parts.length
-        ? `${count.ok} nominal · ${count.warn} warning · ${count.crit} critical`
-        : "Waiting for sensor telemetry";
+        ? `${count.ok} Normal · ${count.warn} Check Recommended · ${count.crit} Action Required`
+        : "Data Unavailable (Awaiting Sensor Link)";
     }
 
     // Add click listener on entire overview card for tapability
@@ -438,8 +438,8 @@ const VeloCheckLive = (() => {
     w.forEach((x, i) => statuses.push(drawGauge(`t${ids[i]}`, r[x]?.temperature_c, t, x)));
     w.forEach((x, i) => statuses.push(drawGauge(`d${ids[i]}`, r[x]?.tread_depth_mm, d, x)));
 
-    trend("pressureTrend", cachedHistory, w, "pressure_psi", 20, 45, ["#00e5ff", "#00e676", "#ffb300", "#ff3366"]);
-    trend("tempTrend", cachedHistory, w, "temperature_c", 20, 100, ["#00e5ff", "#00e676", "#ffb300", "#ff3366"]);
+    trend("pressureTrend", cachedHistory, w, "pressure_psi", 20, 45, ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444"]);
+    trend("tempTrend", cachedHistory, w, "temperature_c", 20, 100, ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444"]);
 
     renderCommon(r, statuses, w);
   }
@@ -452,9 +452,25 @@ const VeloCheckLive = (() => {
       .pop();
 
     const timeEl = document.getElementById("lastReadingTime");
+    const srcBadge = document.getElementById("dataSourceBadge");
+
+    if (srcBadge) {
+      if (isOfflineSimulated) {
+        srcBadge.innerHTML = '○ Simulated Demo Mode';
+        srcBadge.style.color = 'var(--signal-amber)';
+        srcBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+        srcBadge.style.background = 'rgba(245, 158, 11, 0.08)';
+      } else {
+        srcBadge.innerHTML = '● Live ESP32 Sensor';
+        srcBadge.style.color = 'var(--signal-green)';
+        srcBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        srcBadge.style.background = 'rgba(16, 185, 129, 0.08)';
+      }
+    }
+
     if (timeEl) {
       if (isOfflineSimulated) {
-        timeEl.innerHTML = '<span style="color: var(--signal-amber);">DEMO MODE</span>';
+        timeEl.innerHTML = '<span style="color: var(--signal-amber);">Simulated Demo</span>';
       } else if (newest) {
         timeEl.textContent = typeof newest === "number" ? `ESP ${newest}s` : new Date(newest).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
       } else {

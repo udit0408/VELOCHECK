@@ -37,15 +37,15 @@ const VC = (() => {
   }
 
   const STATUS_COLOR = {
-    ok:   "#00e5ff",
-    warn: "#ffb300",
-    crit: "#ff3366"
+    ok:   "#0ea5e9",
+    warn: "#f59e0b",
+    crit: "#ef4444"
   };
 
   const STATUS_GLOW = {
-    ok:   "rgba(0, 229, 255, 0.45)",
-    warn: "rgba(255, 179, 0, 0.45)",
-    crit: "rgba(255, 51, 102, 0.55)"
+    ok:   "rgba(14, 165, 233, 0.15)",
+    warn: "rgba(245, 158, 11, 0.15)",
+    crit: "rgba(239, 68, 68, 0.18)"
   };
 
   function polarToCartesian(cx, cy, r, angleDeg) {

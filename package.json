@@ -4,19 +4,30 @@
   "private": true,
   "description": "VELOCHECK tyre health monitoring app",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "python tests/test_human_scenarios.py",
     "sync": "npx cap sync android",
     "open:android": "npx cap open android",
     "run:android": "npx cap run android",
-    "build:web": "echo Frontend is already in www/",
     "build:apk": "npx cap sync android && cd android && gradlew assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
     "@capacitor/app": "^7.1.2",
     "@capacitor/cli": "^7.4.3",
-    "@capacitor/core": "^7.4.3"
+    "@capacitor/core": "^7.4.3",
+    "lucide-react": "^1.61.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "typescript": "^5.9.3"
   }
 }
